@@ -46,7 +46,7 @@ export const popupValues = writable({
 
 export const gameStates = writable(
     {
-        gameState: "running",
+        gameState: "none",
         players: 2,
         cardsInStack: 3,
         currentPlayer: 0,
@@ -69,4 +69,54 @@ export const playedCards = writable([
         played_id: 1,
         name: "defuse",
     }
+]);
+
+export const deck = writable([
+    "skip",
+    "skip",
+    "skip",
+    "skip",
+    "attack",
+    "attack",
+    "attack",
+    "attack",
+    "favor",
+    "favor",
+    "favor",
+    "favor",
+    "shuffle",
+    "shuffle",
+    "shuffle",
+    "shuffle",
+    "see_future",
+    "see_future",
+    "see_future",
+    "see_future",
+    "nope",
+    "nope",
+    "nope",
+    "nope",
+    "change_future",
+    "change_future",
+    "change_future",
+    "change_future",
+    "targeted_attack",
+    "targeted_attack",
+    "targeted_attack",
+    "targeted_attack",
+    "draw_bottom",
+    "draw_bottom",
+    "draw_bottom",
+    "draw_bottom",
+]);
+
+export const extraCards = writable([
+    "exploding_kitten", 
+    "exploding_kitten", 
+    "exploding_kitten", 
+    "exploding_kitten",
+    "defuse",
+    "defuse",
+    "defuse",
+    "defuse",
 ]);

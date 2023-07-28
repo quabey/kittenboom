@@ -1,4 +1,5 @@
 <script>
+	// =========== STORES =========== //
 	import { cardStack } from './../stores-game.js';
 	import { players } from './../stores-players.js';
 	import {
@@ -10,18 +11,25 @@
 		toastSettings
 	} from './../stores-game.js';
 	import { cards } from './../stores-cards.js';
-
+	// =========== COMPONENTS =========== //
 	import Dropdown from '$lib/dropdown.svelte';
+
+	// =========== OTHER =========== //
 	import toast from 'svelte-french-toast';
 
-
+	// =========== VARIABLES =========== //
 	let password;
 	let cardToAdd = '';
 
-	let DropdownDebug = {
-		name: 'dropdownDebug'
-	};
+	// =========== FUNCTIONS =========== //
 
+	/**
+	 * Moves card up in the stack
+	 * @param {int} index
+	 * @returns {void}
+	 * @function moveCardUp
+	 * @description Moves card up in the stack, if possible
+	 */
 	function moveCardUp(index) {
 		if (index > 0) {
 			let temp = $cardStack[index];
@@ -30,6 +38,13 @@
 		}
 	}
 
+	/**
+	 * Moves card down in the stack
+	 * @param {int} index
+	 * @returns {void}
+	 * @function moveCardDown
+	 * @description Moves card down in the stack, if possible
+	 */
 	function moveCardDown(index) {
 		if (index < $cardStack.length - 1) {
 			let temp = $cardStack[index];
@@ -38,10 +53,24 @@
 		}
 	}
 
+	/**
+	 * Removes card from the stack
+	 * @param {int} index
+	 * @returns {void}
+	 * @function addCard
+	 * @description Removnes card from the stack, if possible
+	 */
 	function removeCard(index) {
+		if (index < 0 || index > $cardStack.length - 1) return;
 		$cardStack.splice(index, 1);
 	}
 
+	/**
+	 * Handles the opening the popup
+	 * @returns {void}
+	 * @function handlePopupOpen
+	 * @description Handles the opening the popup and closes the debug window
+	 */
 	function handlePopupOpen() {
 		console.log('Popup open');
 		$debugStates.debugWindow = false;
@@ -49,19 +78,30 @@
 		console.log($popupValues);
 	}
 
+	/**
+	 * Handles the closing the the debug mode
+	 * @returns {void}
+	 * @function handleDebugClose
+	 * @description Handles the closing the the debug mode
+	 */
 	function handleDisableDebug() {
-		toast.error('Debug mode disabled')
+		toast.error('Debug mode disabled', $toastSettings);
 		$debugStates.debugMode = false;
 	}
 
+	/**
+	 * Handles the enabling of the debug mode
+	 * @returns {void}
+	 * @function handleEnableDebug
+	 * @description Handles the enabling of the debug mode, requires a password to enable
+	 */
 	function handleEnableDebug() {
-
 		if (password === 'debug') {
 			$debugStates.debugMode = true;
-			toast.success('Debug mode enabled', {$toastSettings});
+			toast.success('Debug mode enabled', $toastSettings);
 			return;
 		}
-		toast.error('Wrong password');
+		toast.error('Wrong password', $toastSettings);
 	}
 </script>
 
@@ -159,13 +199,10 @@
 				</ul>
 			</div>
 		</div>
-
-		
 	{:else}
 		<div class="enable-debug">
-			<input type="password" bind:value={password}>
+			<input type="password" bind:value={password} />
 			<button on:click={handleEnableDebug}>Enable Debug</button>
-
 		</div>
 	{/if}
 	<button class="debug-close" on:click={() => ($debugStates.debugWindow = false)}>

@@ -1,16 +1,12 @@
 <script>
 	// =========== STORES =========== //
 	import { players } from './../stores-players';
-	import { gameStates, deck, cardStack } from './../stores-game';
+	import { gameStates, deck, cardStack, toastSettings } from './../stores-game';
 	// =========== COMPONENTS =========== //
 	// =========== OTHER =========== //
 	import toast from 'svelte-french-toast';
 	import { Spinner } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
-
-	// ===================================================//
-	// ====================== CODE ====================== //
-	// ===================================================//
 
 	// >> On mount <<
 	// Ensure that the game is loaded before starting
@@ -32,14 +28,14 @@
 	function startGame() {
 		if (players.length < 2) {
 			console.error('Not enough players to start game');
-			toast.error('Not enough players to start game');
+			toast.error('Not enough players to start game', $toastSettings);
 			return;
 		}
 		console.log('========= STARTING GAME =========');
 		populatePlayerHands();
 		console.log('Player hands populated');
 		console.log('Starting game with ' + $players.length + ' players');
-		toast.success('Starting game with ' + $players.length + ' players');
+		toast.success('Starting game with ' + $players.length + ' players', $toastSettings);
 		console.table($players);
 		console.table($deck);
 

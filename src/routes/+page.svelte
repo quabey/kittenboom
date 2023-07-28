@@ -1,12 +1,13 @@
 <script>
 	import { cardStack } from './../stores-game.js';
 	import { players } from './../stores-players.js';
-	import { gameStates, playerStates, playedCards, popupValues } from './../stores-game.js';
+	import { gameStates, playerStates, playedCards, popupValues, debugStates} from './../stores-game.js';
 
 	import Cards from '$lib/cards.svelte';
 	import Debug from '$lib/debug.svelte';
 	import CardButton from '$lib/cardButton.svelte';
 	import Popup from '$lib/popup.svelte';
+	import toast from 'svelte-french-toast';
 
 	let cardsComponent;
 
@@ -21,6 +22,7 @@
 
 	function handleDrawCard() {
 		if ($cardStack.length <= 1) {
+			toast.error('Card stack is empty');
 			console.error('Card stack is empty');
 			return;
 		}
@@ -34,22 +36,35 @@
 			cardsComponent.handleIncomingDrawnCard(card.name, currentPlayer.player_id);
 		} else {
 			console.error('Current player is undefined');
+			toast.error('Current player is undefined');
 		}
 		$gameStates.currentPlayer++;
 		if ($gameStates.currentPlayer >= $players.length) {
 			$gameStates.currentPlayer = 0;
 		}
 	}
+
+
 </script>
 
 <Cards bind:this={cardsComponent} />
-<Debug />
+
+{#if $debugStates.debugWindow}
+	<div class="debugWindow">	
+		<Debug />
+	</div>
+{/if}
+
+<button on:click={() => $debugStates.debugWindow = true}>Open Debug</button>
+
 
 <h1>Game</h1>
 
-<div class="Popup">
+{#if $popupValues.popupOpen}
+<div class="Popup-Screen">
 	<Popup title={$popupValues.title} text={$popupValues.text} type={$popupValues.type} />
 </div>
+{/if}
 
 <p>Top card: {$cardStack[0].name}</p>
 <p>Current Player: {getCurrentPlayer().name}</p>
@@ -61,7 +76,7 @@
 {#each $players as player}
 	Player: {player.name}
 	<br />
-	{#each player.handCards as card}
+	{#each $players[player.player_id].handCards as card}
 	    <CardButton card_name={card} />
 	{/each}
 {/each}
@@ -73,3 +88,27 @@ Played Cards
 {#each $playedCards as card}
 	{card.name} <br />
 {/each}
+
+
+<style>
+
+	.debugWindow {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5);
+		z-index: 100;
+	}
+
+	.Popup-Screen {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5);
+		z-index: 100;
+	}
+</style>

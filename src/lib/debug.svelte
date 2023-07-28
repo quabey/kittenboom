@@ -1,10 +1,26 @@
 <script>
 	import { cardStack } from './../stores-game.js';
 	import { players } from './../stores-players.js';
-	import { gameStates, playerStates, playedCards, popupValues } from './../stores-game.js';
+	import {
+		gameStates,
+		playerStates,
+		playedCards,
+		popupValues,
+		debugStates,
+		toastSettings
+	} from './../stores-game.js';
 	import { cards } from './../stores-cards.js';
 
+	import Dropdown from '$lib/dropdown.svelte';
+	import toast from 'svelte-french-toast';
+
+
+	let password;
 	let cardToAdd = '';
+
+	let DropdownDebug = {
+		name: 'dropdownDebug'
+	};
 
 	function moveCardUp(index) {
 		if (index > 0) {
@@ -25,72 +41,222 @@
 	function removeCard(index) {
 		$cardStack.splice(index, 1);
 	}
+
+	function handlePopupOpen() {
+		console.log('Popup open');
+		$debugStates.debugWindow = false;
+		$popupValues.popupOpen = true;
+		console.log($popupValues);
+	}
+
+	function handleDisableDebug() {
+		toast.error('Debug mode disabled')
+		$debugStates.debugMode = false;
+	}
+
+	function handleEnableDebug() {
+
+		if (password === 'debug') {
+			$debugStates.debugMode = true;
+			toast.success('Debug mode enabled', {$toastSettings});
+			return;
+		}
+		toast.error('Wrong password');
+	}
 </script>
 
-<h1>Debug</h1>
+<div class="debug-container">
+	<div class="debug-info-bar">
+		<h3>Debug Window</h3>
+		{#if $debugStates.debugMode}
+			<button on:click={handleDisableDebug}>Disable Debug Mode</button>
+		{/if}
+	</div>
+	{#if $debugStates.debugMode}
+		<div class="debug-options">
+			<div class="Player-Options">
+				<p>
+					Current Player: {$players[$gameStates.currentPlayer].name} (ID:{$gameStates.currentPlayer})
+				</p>
 
-<p>Current Player: {$players[$gameStates.currentPlayer].name} (ID:{$gameStates.currentPlayer})</p>
-<p>
-	Popup Values:
-	<br />
-	Title: <input type="text" bind:value={$popupValues.title} />
-	<br />
-	Text: <input type="text" bind:value={$popupValues.text} />
-	<br />
-	Color: <input type="text" bind:value={$popupValues.color} />
-	<br />
-	Type:
-	<select name="popuptypes" id="popuptypes" bind:value={$popupValues.type}>
-		<option value="target">target</option>
-		<option value="2_same">2_same</option>
-		<option value="3_same">3_same</option>
-		<option value="5_different">5_different</option>
-	</select>
-</p>
+				<p>
+					Players({$players.length}):
 
-<p>
-	Players({$players.length}):
+					{#each $players as player}
+						<div>
+							<div class:active={$gameStates.currentPlayer == player.player_id}>
+								{player.name} (ID: {player.player_id})
+								<button on:click={() => ($gameStates.currentPlayer = player.player_id)}
+									>Set active</button
+								>
+							</div>
+							<div class="player-handcards">
+								{#each $players[player.player_id].handCards as card}
+									<div class="player-handcard">
+										{card}
+									</div>
+								{/each}
+							</div>
+						</div>
+					{/each}
+				</p>
+			</div>
 
-	{#each $players as player}
-		<div class:active={$gameStates.currentPlayer == player.player_id}>
-			{player.name} ({player.player_id}) - {player.handCards}
-			<button on:click={() => ($gameStates.currentPlayer = player.player_id)}>Set active</button>
+			<div class="Popup-Options">
+				<p>
+					Popup Values:
+					<br />
+					Title: <input type="text" bind:value={$popupValues.title} />
+					<br />
+					Text: <input type="text" bind:value={$popupValues.text} />
+					<br />
+					Color: <input type="text" bind:value={$popupValues.color} />
+					<br />
+					Type:
+
+					<Dropdown
+						class="dropdown"
+						bind:current_name={$popupValues.type}
+						options={[
+							{ title: 'target', name: 'target' },
+							{ title: '2_same', name: '2_same' },
+							{ title: '3_same', name: '3_same' },
+							{ title: '5_different', name: '5_different' }
+						]}
+					/>
+					<br />
+					Open Popup:
+					<button on:click={handlePopupOpen}> Open </button>
+				</p>
+			</div>
+
+			<div class="CardStack-Options">
+				<div class="">
+					Clear Card Stack:
+					<button on:click={() => ($cardStack = [])}>Clear</button>
+				</div>
+
+				<div>
+					Add Card to Stack:
+					<br />
+					<Dropdown class="dropdown" bind:current_name={cardToAdd} options={$cards} />
+
+					<button
+						on:click={() =>
+							($cardStack = $cardStack.concat([{ stack_id: $cardStack.lenght, name: cardToAdd }]))}
+						>Add</button
+					>
+				</div>
+				<ul class="cardList">
+					{#each $cardStack as card, i}
+						<li>
+							{card.name}
+							<button on:click={() => moveCardUp(i)}>Up</button>
+							<button on:click={() => moveCardDown(i)}>Down</button>
+							<button on:click={() => removeCard(i)}>Remove</button>
+						</li>
+					{/each}
+				</ul>
+			</div>
 		</div>
-	{/each}
-</p>
 
-<div class="">
-	Clear Card Stack:
-	<button on:click={() => ($cardStack = [])}>Clear</button>
-</div>
+		
+	{:else}
+		<div class="enable-debug">
+			<input type="password" bind:value={password}>
+			<button on:click={handleEnableDebug}>Enable Debug</button>
 
-<div>
-	Add Card to Stack:
-	<br />
-	<select name="cardSelect" id="cardSelect" bind:value={cardToAdd}>
-		{#each $cards as card}
-			<option value={card.name}>{card.name}</option>
-		{/each}
-	</select>
-	<button
-		on:click={() =>
-			($cardStack = $cardStack.concat([{ stack_id: $cardStack.lenght, name: cardToAdd }]))}
-		>Add</button
-	>
+		</div>
+	{/if}
+	<button class="debug-close" on:click={() => ($debugStates.debugWindow = false)}>
+		<img src="close.png" alt="Close" height="20px" />
+	</button>
 </div>
-<ul>
-	{#each $cardStack as card, i}
-		<li>
-			{card.name}
-			<button on:click={() => moveCardUp(i)}>Up</button>
-			<button on:click={() => moveCardDown(i)}>Down</button>
-			<button on:click={() => removeCard(i)}>Remove</button>
-		</li>
-	{/each}
-</ul>
 
 <style>
+	h3 {
+		margin: 0;
+		padding: 0;
+		padding-right: 10px;
+		width: fit-content;
+	}
 	.active {
 		color: red;
+	}
+
+	.enable-debug {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		height: 100%;
+	}
+
+	.debug-info-bar {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+	.debug-options {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		height: 90%;
+	}
+	.debug-container {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background-color: #fff;
+		border-radius: 10px;
+		padding: 20px;
+		width: 60%;
+		height: 60%;
+		border-color: black;
+	}
+
+	.debug-close {
+		position: absolute;
+		top: 30px;
+		right: 6px;
+		transform: translate(-50%, -50%);
+		background: none;
+		border: none;
+		border-radius: 10%;
+		height: 30px;
+		width: 30px;
+	}
+
+	.debug-close:hover {
+		background-color: lightgray;
+	}
+
+	.cardList {
+		list-style-type: none;
+		height: 80%;
+		padding: 0;
+		overflow: scroll;
+		width: 100%;
+		overflow-x: hidden;
+	}
+
+	.CardStack-Options {
+		width: 33%;
+		padding: 1%;
+	}
+
+	.Popup-Options {
+		width: 30%;
+		border-right: black solid 2px;
+		border-left: black solid 2px;
+		padding: 1%;
+		padding-right: 2%;
+		padding-left: 2%;
+	}
+
+	.Player-Options {
+		width: 30%;
+		padding: 1%;
 	}
 </style>

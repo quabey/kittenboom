@@ -1,6 +1,9 @@
 <script>
+	import { popupValues } from './../stores-game.js';
 	import { players } from '../stores-players';
 	import { gameStates, playedCards, playerStates } from '../stores-game';
+
+	import Dropdown from '$lib/dropdown.svelte';
 
 	export let title;
 	export let text;
@@ -8,10 +11,12 @@
 	export let type;
 
 	let playerTarget;
+	let playerOptions = [];
+	$: playerOptions = $players.map(player => ({name: player.name, title: player.name}));
 	let cardTarget;
 
 	function closePopup() {
-		$gameStates.popupOpen = false;
+		$popupValues.popupOpen = false;
 	}
 
 	function handlePlayerSelect() {
@@ -26,11 +31,17 @@
 	}
 </script>
 
-<div class="popup-container" class:hidden={$gameStates.popupOpen}>
+<div class="popup-container">
 	<h1 class="popup-title">{title}</h1>
 	<p class="popup-text">{text}</p>
-	<button class="popup-button" on:click={closePopup}>Close</button>
+	<button class="popup-button" on:click={closePopup}>
+		<img src="close.png" alt="Close" height="20px">
+	</button>
 	{#if type === 'target'}
+	<div class="Dropdown">
+		<Dropdown bind:current_name={playerTarget} options={playerOptions} />
+	</div>
+		
 		<select name="target" id="target" bind:value={playerTarget}>
 			{#each $players as player}
 				<option value={player.name}>{player.name}</option>
@@ -54,7 +65,40 @@
 </div>
 
 <style>
-	.hidden {
-		display: none;
+	.popup-container {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background-color: #fff;
+		border-radius: 10px;
+		padding: 20px;
+		width: 300px;
+		height: 300px;
+		border-color: black;
+	}
+
+	.popup-title {
+		text-align: center;
+	}
+
+	.popup-text {
+		text-align: center;
+	}
+
+	.popup-button {
+		position: absolute;
+		top: 20px;
+		right: 0%;
+		transform: translate(-50%, -50%);
+		background: none;
+		border: none;
+		border-radius: 10%;
+		height: 30px;
+		width: 30px;
+	}
+
+	.popup-button:hover {
+		background-color: lightgray;
 	}
 </style>

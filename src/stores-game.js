@@ -1,5 +1,21 @@
 import { writable } from "svelte/store";
 
+export const debugStates = writable(
+    {
+        debugMode: true,
+        debugWindow: false,
+    }
+);
+
+export const toastSettings = writable(
+    {
+        position: "top-right",
+        duration: 3000,
+        dismissible: false,
+        pauseOnHover: true,
+    }
+);
+
 export const cardStack = writable([
     {
         stack_id: 1,
@@ -34,7 +50,6 @@ export const gameStates = writable(
         players: 2,
         cardsInStack: 3,
         currentPlayer: 0,
-        popupOpen: false,
     }
 );
 

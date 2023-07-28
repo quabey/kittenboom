@@ -14,6 +14,11 @@
 	const card_image = card.image;
 	const card_color = card.color;
 
+	let text_color = 'black';
+	if (card_color == ("#41044A" || "#0A0D1C" || "#393642")) {
+		text_color = 'white';
+	}
+
 	function handleClick() {
 		if (card_name === 'defuse') {
 			console.log('Defuse card cannot be played');
@@ -29,7 +34,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="container" on:click={handleClick} style="--color:{card_color}">
+<div class="container" on:click={handleClick} style="--color:{card_color}; --text-color:{text_color}">
 	{card_title}
 	{card_description}
 </div>
@@ -47,5 +52,6 @@
 		justify-content: space-between;
 		align-items: center;
 		background-color: var(--color);
+		color: var(--text-color);
 	}
 </style>

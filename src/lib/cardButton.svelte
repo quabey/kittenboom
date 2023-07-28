@@ -15,6 +15,11 @@
     const card_color = card.color;
 
     function handleClick() {
+        if (card_name === "defuse") {
+            console.log("Defuse card cannot be played");
+            return;
+        }
+
         console.log(card_name + " played");
         cardsComponent.handleIncomingPlayedCard(card_name);
     }

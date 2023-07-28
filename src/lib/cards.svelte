@@ -8,7 +8,8 @@
         console.log("Handling incoming played card: " + card_name);
         console.log("Adding " + card_name + " to played cards");
         addToPlayedCards(card_name);
-
+        console.log("Removing " + card_name + " from " + $gameStates.currentPlayer + " hand cards");
+        removeFromHandCards(card_name, $gameStates.currentPlayer);
         let card = $cards.find(c => c.name === card_name);
 
 
@@ -22,8 +23,6 @@
             console.log(handleKitten(player_id));
             return;
         }
-
-        console.log("Adding " + card_name + " to " + player_id + " hand cards");
         addToHandCards(card_name, player_id);
     }
 
@@ -33,7 +32,7 @@
 
         if ($players[player_id].handCards.includes("defuse")) {
             console.log("Player has defuse");
-            
+            removeFromHandCards("defuse", player_id);
             return "Player: " + $players[player_id].name + "defused the kitten";
         }
         
@@ -61,11 +60,13 @@
     console.log("Removing " + card_name + " from " + player_id + " hand cards");
     const index = $players[player_id].handCards.indexOf(card_name);
     if(index !== -1){
-        $players[player_id].handCards.splice(index, 1);
+        let updatedHandCards = $players[player_id].handCards.slice();
+        updatedHandCards.splice(index, 1);
+        $players[player_id].handCards = updatedHandCards;
     }
-    else 
-        console.log("Card not found");
 }
+
+
 
 
 

@@ -23,7 +23,7 @@
     function handleDrawCard() {
 
         if ($cardStack.length <= 1) {
-            console.log("Card stack is empty");
+            console.error("Card stack is empty");
             return;
         }
 

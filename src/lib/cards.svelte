@@ -2,11 +2,10 @@
 	import { gameStates, playedCards, toastSettings } from '../stores-game';
 	import { players } from '../stores-players';
 	import { cards } from '../stores-cards';
-
+	import toast from 'svelte-french-toast';
 
 	export function handleIncomingPlayedCard(card_name) {
 		console.log('Handling incoming played card: ' + card_name);
-		console.log('Adding ' + card_name + ' to played cards');
 		addToPlayedCards(card_name);
 		console.log('Removing ' + card_name + ' from ' + $gameStates.currentPlayer + ' hand cards');
 		removeFromHandCards(card_name, $gameStates.currentPlayer);
@@ -29,9 +28,10 @@
 		if ($players[player_id].handCards.includes('defuse')) {
 			console.log('Player has defuse');
 			removeFromHandCards('defuse', player_id);
-			toast.success('Player: ' + $players[player_id].name + ' defused the kitten', {$toastSettings});
+			toast.success('Player: ' + $players[player_id].name + ' defused the kitten', {
+				$toastSettings
+			});
 			return 'Player: ' + $players[player_id].name + 'defused the kitten';
-
 		}
 
 		console.log('Player does not have defuse');
@@ -44,6 +44,7 @@
 
 	export function addToPlayedCards(card_name) {
 		console.log('Adding ' + card_name + ' to played cards');
+		toast.success('Played: ' + card_name, { $toastSettings });
 		$playedCards = $playedCards.concat([{ played_id: $playedCards.length, name: card_name }]);
 	}
 
@@ -63,7 +64,7 @@
 			console.log($players[player_id].handCards);
 			return;
 		}
-		console.error('Card not found in hand cards');
-		
+		console.error(card_name + ' card not found in hand cards of ' + player_id);
+		console.log($players[player_id].handCards);
 	}
 </script>

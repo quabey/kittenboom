@@ -7,9 +7,12 @@
 
 	// =========== OTHER =========== //
 	import { getCardByName } from '$lib/functions.js';
+	import { onMount } from 'svelte';
 
+	// =========== PROPS =========== //
 	export let card_name;
 
+	// =========== VARIABLES =========== //
 	let card = $cards.find((card) => card.name === card_name);
 	let cardsComponent;
 
@@ -18,11 +21,18 @@
 	const card_image = card.image;
 	const card_color = card.color;
 
-	let text_color = 'black';
-	if (card_color == ('#41044A' || '#0A0D1C' || '#393642')) {
-		text_color = 'white';
-	}
+	const dark_colors = ['#41044A', '#0A0D1C', '#393642'];
+	// send text color based on card color
+	let text_color = dark_colors.includes(card_color) ? 'white' : 'black';
 
+	// =========== FUNCTIONS =========== //
+	/**
+	 * Handles the click event on the card
+	 * @returns {void}
+	 * @function handleClick
+	 * @implements {cardsComponent.handleIncomingPlayedCard}
+	 * @description Handles the click event on the card, if the card is a defuse card, it will not be played. Otherwise it will be played and the cardsComponent will handle the played card
+	 */
 	function handleClick() {
 		if (card_name === 'defuse') {
 			console.log('Defuse card cannot be played');

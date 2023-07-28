@@ -1,24 +1,43 @@
 <script>
+	// =========== STORES =========== //
 	import { popupValues } from './../stores-game.js';
 	import { players } from '../stores-players';
 	import { gameStates, playedCards, playerStates } from '../stores-game';
 
+	// =========== COMPONENTS =========== //
 	import Dropdown from '$lib/dropdown.svelte';
 
+	// =========== PROPS =========== //
 	export let title;
 	export let text;
-	// export let color;
+	// export let color; // maybe add later
 	export let type;
 
+	// =========== VARIABELS =========== //
 	let playerTarget;
 	let playerOptions = [];
-	$: playerOptions = $players.map(player => ({name: player.name, title: player.name}));
+	$: playerOptions = $players.map((player) => ({ name: player.name, title: player.name }));
 	let cardTarget;
 
+	// =========== FUNCTIONS =========== //
+
+	/**
+	 * Closes the popup
+	 * @returns {void}
+	 * @function closePopup
+	 * @description Closes the popup, by setting the popupOpen store to false
+	 */
 	function closePopup() {
 		$popupValues.popupOpen = false;
 	}
 
+	/**
+	 * Handles the player select
+	 * @returns {void}
+	 * @function handlePlayerSelect
+	 * @description Handles the player select
+	 * @todo Add functionality
+	 */
 	function handlePlayerSelect() {
 		console.log(playerTarget);
 	}
@@ -35,13 +54,13 @@
 	<h1 class="popup-title">{title}</h1>
 	<p class="popup-text">{text}</p>
 	<button class="popup-button" on:click={closePopup}>
-		<img src="close.png" alt="Close" height="20px">
+		<img src="close.png" alt="Close" height="20px" />
 	</button>
 	{#if type === 'target'}
-	<div class="Dropdown">
-		<Dropdown bind:current_name={playerTarget} options={playerOptions} />
-	</div>
-		
+		<div class="Dropdown">
+			<Dropdown bind:current_name={playerTarget} options={playerOptions} />
+		</div>
+
 		<select name="target" id="target" bind:value={playerTarget}>
 			{#each $players as player}
 				<option value={player.name}>{player.name}</option>

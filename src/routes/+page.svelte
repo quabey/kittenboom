@@ -17,17 +17,25 @@
 
 	let cardsComponent;
 
+	// ===================================================//
+	// ====================== CODE ====================== //
+	// ===================================================//
+
+	/**
+	 * Returns the current player
+	 * @returns {object} The current player
+	 * @function getCurrentPlayer
+	 * @description Returns the current player as an object
+	 */
 	function getCurrentPlayer() {
 		return $players[$gameStates.currentPlayer];
 	}
 
-	console.log(getCurrentPlayer());
-	console.log($players);
-	console.log($gameStates);
-	console.log($gameStates.currentPlayer);
-	$gameStates.loaded = true;
+	console.table($gameStates);
+	console.log('Current player: ' + getCurrentPlayer().name);
 </script>
 
+<!--  -->
 <Cards bind:this={cardsComponent} />
 
 <GameBar />

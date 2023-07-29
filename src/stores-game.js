@@ -41,11 +41,14 @@ export const popupValues = writable({
 //      ended
 
 export const gameStates = writable({
+	gameSetuping: false,
 	gameState: 'none',
 	players: 2,
 	cardsInStack: 3,
 	currentPlayer: 0,
-	loaded: false
+	loaded: false,
+	lastPopupSelect: '',
+	popupButtonPressed: false
 });
 
 export const playerStates = writable({
@@ -61,6 +64,26 @@ export const playedCards = writable([
 	{
 		played_id: 1,
 		name: 'defuse'
+	},
+	{
+		played_id: 2,
+		name: 'exploding_kitten'
+	},
+	{
+		played_id: 3,
+		name: 'skip'
+	},
+	{
+		played_id: 4,
+		name: 'skip'
+	},
+	{
+		played_id: 5,
+		name: 'skip'
+	},
+	{
+		played_id: 6,
+		name: 'skip'
 	}
 ]);
 

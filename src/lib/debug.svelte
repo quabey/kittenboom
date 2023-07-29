@@ -119,7 +119,7 @@
 					Current Player: {$players[$gameStates.currentPlayer].name} (ID:{$gameStates.currentPlayer})
 				</p>
 
-				<p>
+				<p class="overflow-scroll">
 					Players({$players.length}):
 
 					{#each $players as player}

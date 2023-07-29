@@ -38,7 +38,9 @@
 <!--  -->
 <Cards bind:this={cardsComponent} />
 
-<GameBar />
+<div class="gamebar">
+	<GameBar />
+</div>
 
 {#if $debugStates.debugWindow}
 	<div class="debugWindow">
@@ -57,11 +59,6 @@
 		<Popup title={$popupValues.title} text={$popupValues.text} type={$popupValues.type} />
 	</div>
 {/if}
-
-<p>Top card: {$cardStack[0].name}</p>
-<p>Current Player: {getCurrentPlayer().name}</p>
-
-<hr />
 
 {#each $players as player}
 	Player: {player.name}
@@ -89,7 +86,7 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background-color: rgba(0, 0, 0, 0.5);
+		background: url('background.svg');
 		z-index: 100;
 	}
 

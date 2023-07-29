@@ -32,14 +32,18 @@
 			return;
 		}
 		console.log('========= STARTING GAME =========');
+		$gameStates.gameSetuping = true;
+
 		populatePlayerHands();
 		console.log('Player hands populated');
 		console.log('Starting game with ' + $players.length + ' players');
 		toast.success('Starting game with ' + $players.length + ' players', $toastSettings);
 		console.table($players);
 		console.table($deck);
-
-		$gameStates.gameState = 'running';
+		setTimeout(() => {
+			$gameStates.gameSetuping = false;
+			$gameStates.gameState = 'running';
+		}, 3000);
 	}
 
 	/**
@@ -83,9 +87,9 @@
 </script>
 
 <div class="newgame-container">
-	<h3 class="newgamewindow-title">Exploding Kittens</h3>
+	<h3 class="text-2xl mb-2 font-bold">Exploding Kittens</h3>
 
-	{#if $gameStates.loaded}
+	{#if $gameStates.loaded && !$gameStates.gameSetuping}
 		<div class="">
 			Current players({$players.length}):
 			<ul class="list-item">
@@ -94,17 +98,13 @@
 				{/each}
 			</ul>
 		</div>
-		<button on:click={startGame}>Start Game</button>
+		<button class="scale-125 mt-2" on:click={startGame}>Start Game</button>
 	{:else}
 		<Spinner />
 	{/if}
 </div>
 
 <style>
-	.newgamewindow-title {
-		font-size: larger;
-	}
-
 	.newgame-container {
 		background-color: white;
 		display: flex;
@@ -114,10 +114,10 @@
 		position: absolute;
 		top: 50%;
 		left: 50%;
+		padding: 30px;
 		transform: translate(-50%, -50%);
-		padding: 20px;
 		border-radius: 10px;
-		width: 300px;
-		height: 200px;
+		width: 350px;
+		height: 250px;
 	}
 </style>

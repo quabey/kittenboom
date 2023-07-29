@@ -3,13 +3,13 @@ import { writable } from 'svelte/store';
 export const players = writable([
 	{
 		player_id: 0,
-		name: 'Player 1',
+		name: 'Barbie',
 		alive: true,
 		handCards: []
 	},
 	{
 		player_id: 1,
-		name: 'Player 2',
+		name: 'Oppenheimer',
 		alive: true,
 		handCards: []
 	}

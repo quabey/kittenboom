@@ -1,6 +1,6 @@
 <script>
 	// =========== STORES =========== //
-	import { gameStates, playedCards, toastSettings } from '../stores-game';
+	import { gameStates, playedCards, toastSettings, popupValues } from '../stores-game';
 	import { players } from '../stores-players';
 	import { cards } from '../stores-cards';
 	// =========== COMPONENTS =========== //
@@ -21,9 +21,80 @@
 	export function handleIncomingPlayedCard(card_name) {
 		console.log('Handling incoming played card: ' + card_name);
 		addToPlayedCards(card_name);
+		switch (card) {
+			case card.name === 'skip':
+				handleCardSkip();
+				break;
+			case card.name === 'favor':
+				handleCardFavor();
+				break;
+			case card.name === 'target_attack':
+				handleCardTargetAttack();
+				break;
+			default:
+				toast.error('Card not found', $toastSettings);
+				break;
+		}
 		console.log('Removing ' + card_name + ' from ' + $gameStates.currentPlayer + ' hand cards');
 		removeFromHandCards(card_name, $gameStates.currentPlayer);
 		let card = $cards.find((c) => c.name === card_name);
+	}
+
+	/**
+	 * Handles card skip
+	 * @returns {void}
+	 * @function handleCardSkip
+	 * @description Handles card skip, skips the next player
+	 * @example
+	 * handleCardSkip();
+	 */
+	function handleCardSkip() {
+		console.log('Handling card skip');
+		$gameStates.currentPlayer++;
+		if ($gameStates.currentPlayer >= $players.length) {
+			$gameStates.currentPlayer = 0;
+		}
+	}
+
+	/**
+	 * Handles card favor
+	 * @returns {void}
+	 * @function handleCardFavor
+	 * @description Handles card favor, lets the current player choose a card from another player
+	 * @example
+	 * handleCardFavor();
+	 */
+	async function handleCardFavor() {
+		console.log('Handling card favor');
+		$popupValues.popupOpen = true;
+		$popupValues.title = 'Choose a player';
+		$popupValues.text = 'Choose a player to take a random card from';
+		$popupValues.type = 'favor';
+
+		const buttonPressPromise = new Promise((resolve) => {
+			if ($gameStates.popupButtonPressed) {
+				console.log('Popup button pressed');
+				resolve();
+			}
+		});
+
+		await buttonPressPromise;
+	}
+
+	async function handleCardTargetAttack() {
+		console.log('Handling card target attack');
+		$popupValues.popupOpen = true;
+		$popupValues.title = 'Choose a player';
+		$popupValues.text = 'Choose a player to attack';
+		$popupValues.type = 'target_attack';
+
+		const buttonPressPromise = new Promise((resolve) => {
+			if ($gameStates.popupButtonPressed) {
+				resolve();
+			}
+		});
+
+		await buttonPressPromise;
 	}
 
 	/**

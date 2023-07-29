@@ -1,4 +1,5 @@
 <script>
+	import { cards } from './../stores-cards.js';
 	// =========== STORES =========== //
 	import { cardStack, playedCards } from './../stores-game.js';
 	import { players } from './../stores-players.js';
@@ -9,6 +10,12 @@
 		debugStates,
 		toastSettings
 	} from './../stores-game.js';
+
+	// =========== COMPONENTS =========== //
+	import Cards from '$lib/cards.svelte';
+
+	// =========== VARIABLES =========== //
+	let cardsComponent;
 
 	// =========== FUNCTIONS =========== //
 	/**
@@ -61,34 +68,61 @@
 <div class="container">
 	<div class="Actions">
 		Actions
-		<button on:click={handleDrawCard}>Draw Card</button>
-		<button on:click={() => ($debugStates.debugWindow = true)}>Open Debug</button>
-		<button on:click={() => ($gameStates.gameState = 'none')}>Stop Game</button>
+		<div class="ActionButtons">
+			<button on:click={handleDrawCard}>Draw Card</button>
+			<button on:click={() => ($debugStates.debugWindow = true)}>Open Debug</button>
+			<button on:click={() => ($gameStates.gameState = 'none')}>Stop Game</button>
+		</div>
 	</div>
 	<div class="Quick-Infos">
 		Quick Infos
 		<p>Top card: {$cardStack[0].name}</p>
 		<p>Current Player: {getCurrentPlayer().name}</p>
 	</div>
+	<div class="playedCards">
+		Played Cards
+		<div class="playedCardsList overflow-scroll" />
+		{#each $playedCards as card}
+			<p>{card.name}</p>
+		{/each}
+	</div>
 </div>
 
+<Cards bind:this={cardsComponent} />
+
 <style>
-	p {
-		margin: 0;
+	.playedCardsList {
+		display: flex;
+		flex-direction: row;
+		overflow: scroll;
+		height: 100px;
+	}
+
+	.playedCards {
+		display: flex;
+		flex-direction: column;
+		width: 30%;
+		height: 100px;
 	}
 
 	.container {
 		display: flex;
 		flex-direction: row;
+		width: 100%;
+		height: 100px;
 	}
 
 	.Actions {
 		display: flex;
 		flex-direction: column;
+		width: 30%;
 	}
 
 	.Quick-Infos {
 		display: flex;
 		flex-direction: column;
+		border-right: black solid 1px;
+		border-left: black solid 1px;
+		width: 30%;
 	}
 </style>

@@ -42,6 +42,20 @@
 		console.log(playerTarget);
 	}
 
+	/**
+	 * Handles the player attack
+	 * @returns {void}
+	 * @function handlePlayerAttack
+	 * @description Handles the player attack
+	 * @todo Add functionality
+	 */
+	function handlePlayerAttack() {
+		console.log(
+			'Player: ' + $players[$gameStates.currentPlayer].name + ' is attacking ' + playerTarget
+		);
+		$gameStates.lastPopupSelect = playerTarget;
+		$gameStates.popupButtonPressed = true;
+	}
 	function handleCardSelect() {
 		console.log('Adding' + cardTarget);
 		$players[$gameStates.currentPlayer].handCards = $players[
@@ -67,6 +81,17 @@
 			{/each}
 		</select>
 		<button on:click={handlePlayerSelect}> Select </button>
+	{:else if type === 'target_attck'}
+		<div class="Dropdown">
+			<Dropdown bind:current_name={playerTarget} options={playerOptions} />
+		</div>
+
+		<select name="target" id="target" bind:value={playerTarget}>
+			{#each $players as player}
+				<option value={player.name}>{player.name}</option>
+			{/each}
+		</select>
+		<button on:click={handlePlayerAttack}> Select </button>
 	{:else if type === '2_same'}
 		Todo
 	{:else if type === '3_same'}

@@ -159,6 +159,7 @@
 						bind:current_name={$popupValues.type}
 						options={[
 							{ title: 'target', name: 'target' },
+							{ title: 'target_attack', name: 'target_attack' },
 							{ title: '2_same', name: '2_same' },
 							{ title: '3_same', name: '3_same' },
 							{ title: '5_different', name: '5_different' }
@@ -248,8 +249,8 @@
 		background-color: #fff;
 		border-radius: 10px;
 		padding: 20px;
-		width: 60%;
-		height: 60%;
+		width: 70%;
+		height: 80%;
 		border-color: black;
 	}
 

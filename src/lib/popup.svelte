@@ -55,6 +55,7 @@
 		);
 		$gameStates.lastPopupSelect = playerTarget;
 		$gameStates.popupButtonPressed = true;
+		$popupValues.popupOpen = false;
 	}
 	function handleCardSelect() {
 		console.log('Adding' + cardTarget);
@@ -67,6 +68,7 @@
 <div class="popup-container">
 	<h1 class="popup-title">{title}</h1>
 	<p class="popup-text">{text}</p>
+	{type}
 	<button class="popup-button" on:click={closePopup}>
 		<img src="close.png" alt="Close" height="20px" />
 	</button>
@@ -74,23 +76,11 @@
 		<div class="Dropdown">
 			<Dropdown bind:current_name={playerTarget} options={playerOptions} />
 		</div>
-
-		<select name="target" id="target" bind:value={playerTarget}>
-			{#each $players as player}
-				<option value={player.name}>{player.name}</option>
-			{/each}
-		</select>
 		<button on:click={handlePlayerSelect}> Select </button>
-	{:else if type === 'target_attck'}
+	{:else if type === 'target_attack'}
 		<div class="Dropdown">
 			<Dropdown bind:current_name={playerTarget} options={playerOptions} />
 		</div>
-
-		<select name="target" id="target" bind:value={playerTarget}>
-			{#each $players as player}
-				<option value={player.name}>{player.name}</option>
-			{/each}
-		</select>
 		<button on:click={handlePlayerAttack}> Select </button>
 	{:else if type === '2_same'}
 		Todo

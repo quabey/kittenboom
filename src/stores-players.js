@@ -12,5 +12,11 @@ export const players = writable([
 		name: 'Oppenheimer',
 		alive: true,
 		handCards: []
+	},
+	{
+		player_id: 2,
+		name: 'Einstein',
+		alive: true,
+		handCards: []
 	}
 ]);

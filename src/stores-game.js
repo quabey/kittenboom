@@ -7,7 +7,7 @@ export const debugStates = writable({
 
 export const toastSettings = writable({
 	position: 'top-right',
-	duration: 3000,
+	duration: 10000,
 	dismissible: false,
 	pauseOnHover: true
 });

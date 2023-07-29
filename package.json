@@ -12,13 +12,21 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.20.4",
+		"autoprefixer": "^10.4.14",
+		"postcss": "^8.4.24",
+		"postcss-load-config": "^4.0.1",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.10.1",
 		"svelte": "^4.0.5",
+		"tailwindcss": "^3.3.2",
 		"vite": "^4.4.2"
 	},
 	"type": "module",
 	"dependencies": {
-		"svelte-french-toast": "^1.2.0"
+		"@floating-ui/dom": "^1.5.0",
+		"flowbite": "^1.7.0",
+		"flowbite-svelte": "^0.40.2",
+		"svelte-french-toast": "^1.2.0",
+		"tailwind-merge": "^1.14.0"
 	}
 }

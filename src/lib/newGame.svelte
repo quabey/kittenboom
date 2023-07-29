@@ -1,24 +1,58 @@
 <script>
+	// =========== STORES =========== //
 	import { players } from './../stores-players';
-	import { gameStates, deck, cardStack } from './../stores-game';
+	import { gameStates, deck, cardStack, toastSettings } from './../stores-game';
+	// =========== COMPONENTS =========== //
+	// =========== OTHER =========== //
 	import toast from 'svelte-french-toast';
+	import { Spinner } from 'flowbite-svelte';
+	import { onMount } from 'svelte';
 
+	// >> On mount <<
+	// Ensure that the game is loaded before starting
+	onMount(() => {
+		setTimeout(() => {
+			$gameStates.loaded = true; // set gamestate to loaded
+		}, 3000);
+	});
+
+	/**
+	 * Starts and initializes the game
+	 * @type {function}
+	 * @returns {void}
+	 * @function startGame
+	 * @implements {populatePlayerHands}
+	 * @description Starts the game and populates the player hands, requires at least 2 players
+	 * @todo Add more checks to ensure that the game can be started
+	 */
 	function startGame() {
 		if (players.length < 2) {
 			console.error('Not enough players to start game');
-			toast.error('Not enough players to start game');
+			toast.error('Not enough players to start game', $toastSettings);
 			return;
 		}
 		console.log('========= STARTING GAME =========');
+		$gameStates.gameSetuping = true;
+
 		populatePlayerHands();
+		console.log('Player hands populated');
 		console.log('Starting game with ' + $players.length + ' players');
-		toast.success('Starting game with ' + $players.length + ' players');
+		toast.success('Starting game with ' + $players.length + ' players', $toastSettings);
 		console.table($players);
 		console.table($deck);
-
-		$gameStates.gameState = 'running';
+		setTimeout(() => {
+			$gameStates.gameSetuping = false;
+			$gameStates.gameState = 'running';
+		}, 3000);
 	}
 
+	/**
+	 * Draws a random card from the deck
+	 * @type {function}
+	 * @returns {string} Returns a random card from the deck
+	 * @function drawRandomCard
+	 * @description Draws a random card from the deck and removes it from the deck
+	 */
 	function drawRandomCard() {
 		const randomNum = Math.floor(Math.random() * $deck.length);
 		let randomCard = $deck[randomNum];
@@ -26,6 +60,14 @@
 		return randomCard;
 	}
 
+	/**
+	 * Populates the player hands with cards
+	 * @type {function}
+	 * @returns {void}
+	 * @function populatePlayerHands
+	 * @implements {drawRandomCard}
+	 * @description Populates the player hands with cards, using the drawRandomCard function
+	 */
 	function populatePlayerHands() {
 		console.log('Populating player hands');
 		// clear handCards
@@ -45,16 +87,21 @@
 </script>
 
 <div class="newgame-container">
-	<h3>Exploding Kittens</h3>
-	<div class="">
-		Current players({$players.length}):
-		<ul>
-			{#each $players as player}
-				<li>{player.name}</li>
-			{/each}
-		</ul>
-	</div>
-	<button on:click={startGame}>Start Game</button>
+	<h3 class="text-2xl mb-2 font-bold">Exploding Kittens</h3>
+
+	{#if $gameStates.loaded && !$gameStates.gameSetuping}
+		<div class="">
+			Current players({$players.length}):
+			<ul class="list-item">
+				{#each $players as player}
+					<li>{player.name}</li>
+				{/each}
+			</ul>
+		</div>
+		<button class="scale-125 mt-2" on:click={startGame}>Start Game</button>
+	{:else}
+		<Spinner />
+	{/if}
 </div>
 
 <style>
@@ -67,10 +114,10 @@
 		position: absolute;
 		top: 50%;
 		left: 50%;
+		padding: 30px;
 		transform: translate(-50%, -50%);
-		padding: 20px;
 		border-radius: 10px;
-		width: 300px;
-		height: 200px;
+		width: 350px;
+		height: 250px;
 	}
 </style>

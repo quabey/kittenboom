@@ -1,23 +1,31 @@
 <script>
-    
-    
-    export let current = {title: 'Select', name: "none"}; // default value
+	// =========== VARIABLES =========== //
 	let isOpen = false;
+
+	// =========== PROPS =========== //
+	export let current = { title: 'Select', name: 'none' }; // default value
 	export let options = [];
+	export let width = '200px';
+	export let current_name = 'none';
 
-    export let current_name = "none"
-
-
+	// =========== FUNCTIONS =========== //
+	/**
+	 * Setting variable to selected option
+	 * @param {object} option - The option to select
+	 * @return {void}
+	 * @function selectOption
+	 * @description Setting variables to selected option, closing dropdown
+	 */
 	function selectOption(option) {
 		current = option;
-        current_name = option.name;
+		current_name = option.name;
 		isOpen = false;
 	}
 </script>
 
 <!-- svelte-ignore a11y-positive-tabindex -->
 <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-<div class="dropdown" tabindex="1" on:blur={() => (isOpen = false)}>
+<div class="dropdown" tabindex="1" on:blur={() => (isOpen = false)} style="--width:{width}">
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class="select" on:click={() => (isOpen = !isOpen)}>
@@ -37,7 +45,7 @@
 <style>
 	/*Styling Selectbox*/
 	.dropdown {
-		width: 300px;
+		width: var(--width);
 		display: inline-block;
 		background-color: #fff;
 		border-radius: 3px;

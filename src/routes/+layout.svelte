@@ -1,10 +1,7 @@
 <script>
+	import '../app.postcss';
 	import toast, { Toaster } from 'svelte-french-toast';
 	import { cards } from '../stores-cards';
-
-	function getCardByName(name) {
-		return $cards.find((card) => card.name === name);
-	}
 </script>
 
 <Toaster />

@@ -7,6 +7,9 @@
 	import toast from 'svelte-french-toast';
 	import { Spinner } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
+	import * as Colyseus from 'colyseus.js';
+
+	var client = new Colyseus.Client('ws://localhost:2567');
 
 	// >> On mount <<
 	// Ensure that the game is loaded before starting
@@ -40,6 +43,14 @@
 		toast.success('Starting game with ' + $players.length + ' players', $toastSettings);
 		console.table($players);
 		console.table($deck);
+		client
+			.joinOrCreate('my_room')
+			.then((room) => {
+				console.log(room.sessionId, 'joined', room.name);
+			})
+			.catch((e) => {
+				console.log('JOIN ERROR', e);
+			});
 		setTimeout(() => {
 			$gameStates.gameSetuping = false;
 			$gameStates.gameState = 'running';

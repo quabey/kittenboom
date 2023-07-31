@@ -1,112 +1,92 @@
 <script>
-	// =========== STORES =========== //
-	import { cardStack, playedCards } from './../stores-game.js';
-	import { players } from './../stores-players.js';
-	import { gameStates, playerStates, popupValues, debugStates } from './../stores-game.js';
+	import { roomStore, roomsStore, toastSettings } from './../stores-game.js';
+	import { goto } from '$app/navigation';
+	import { Spinner } from 'flowbite-svelte';
 
-	// =========== COMPONENTS =========== //
-	import Cards from '$lib/cards.svelte';
-	import Debug from '$lib/debug.svelte';
-	import CardButton from '$lib/cardButton.svelte';
-	import Popup from '$lib/popup.svelte';
-	import NewGame from '$lib/newGame.svelte';
-	import GameBar from '$lib/gameBar.svelte';
-
-	// =========== OTHER =========== //
+	// =========== Gameserver API =========== //
+	import { getRooms, createOrJoin, joinRoom, sendMessage } from '$lib/gameserver.js';
+	import { onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
 
-	let cardsComponent;
+	let promise = getGameRooms();
+	let loading = true;
 
-	// ===================================================//
-	// ====================== CODE ====================== //
-	// ===================================================//
-
-	/**
-	 * Returns the current player
-	 * @returns {object} The current player
-	 * @function getCurrentPlayer
-	 * @description Returns the current player as an object
-	 */
-	function getCurrentPlayer() {
-		return $players[$gameStates.currentPlayer];
+	async function createOrJoinGame() {
+		const room = await createOrJoin();
+		console.log(room);
+		console.log($roomStore);
+		toast.success('Joined game', $toastSettings);
+		handleJoinedGame();
 	}
 
-	console.table($gameStates);
-	console.log('Current player: ' + getCurrentPlayer().name);
+	async function getGameRooms() {
+		const rooms = await getRooms();
+		console.log(rooms);
+		$roomsStore = rooms;
+		toast.promise(
+			promise,
+			{
+				loading: 'Getting rooms',
+				success: 'Got rooms',
+				error: 'Failed to get rooms'
+			},
+			$toastSettings
+		);
+	}
+
+	onMount(() => {
+		setTimeout(() => {
+			loading = false;
+		}, 1000);
+	});
+
+	function handleGetRooms() {
+		promise = getGameRooms();
+	}
+
+	async function joinGameByID(id) {
+		const room = await joinRoom(id);
+		console.log('Room store', $roomStore);
+		loading = true;
+		setTimeout(() => {
+			handleJoinedGame();
+		}, 1000);
+	}
+
+	function handleJoinedGame() {
+		loading = false;
+		goto('/game');
+	}
+
+	function sendTestMessage() {
+		console.log('Sending test message');
+		sendMessage('test');
+	}
 </script>
 
-<!--  -->
-<Cards bind:this={cardsComponent} />
+<a href="/game"> Go to game</a>
 
-<div class="gamebar">
-	<GameBar />
-</div>
-
-{#if $debugStates.debugWindow}
-	<div class="debugWindow">
-		<Debug />
-	</div>
-{/if}
-
-{#if $gameStates.gameState == 'none'}
-	<div class="newGameScreen">
-		<NewGame />
-	</div>
-{/if}
-
-{#if $popupValues.popupOpen}
-	<div class="Popup-Screen">
-		<Popup title={$popupValues.title} text={$popupValues.text} type={$popupValues.type} />
-	</div>
-{/if}
-
-{#each $players as player}
-	Player: {player.name}
-	<div class="playerCards">
-		{#if player.handCards.length == 0}
-			<p>Player has no cards</p>
-		{/if}
-		{#each $players[player.player_id].handCards as card}
-			<CardButton card_name={card} />
+<button on:click={createOrJoinGame}> Join random lobby </button>
+{#await promise}
+	<Spinner />
+{:then rooms}
+	{#if loading}
+		<Spinner />
+	{:else if $roomsStore.length > 0}
+		{#each $roomsStore as room}
+			<div>
+				{room.name}
+				{room.roomId}
+				<button on:click={() => joinGameByID(room.roomId)}> Join </button>
+			</div>
 		{/each}
-	</div>
-{/each}
+	{:else}
+		<p>No rooms found</p>
+	{/if}
+{:catch error}
+	<p>{error.message}</p>
+{/await}
 
-<hr />
+<button on:click={handleGetRooms}> Get Rooms </button>
 
-<style>
-	.playerCards {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-	}
-	.newGameScreen {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: url('background.svg');
-		z-index: 100;
-	}
-
-	.debugWindow {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0, 0, 0, 0.5);
-		z-index: 100;
-	}
-
-	.Popup-Screen {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0, 0, 0, 0.5);
-		z-index: 100;
-	}
-</style>
+<button on:click={sendTestMessage}> Send test message </button>

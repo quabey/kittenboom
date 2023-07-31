@@ -21,23 +21,23 @@
 	export function handleIncomingPlayedCard(card_name) {
 		console.log('Handling incoming played card: ' + card_name);
 		addToPlayedCards(card_name);
-		switch (card) {
-			case card.name === 'skip':
+		let card = $cards.find((c) => c.name === card_name);
+		switch (card.name) {
+			case 'skip':
 				handleCardSkip();
 				break;
-			case card.name === 'favor':
+			case 'favor':
 				handleCardFavor();
 				break;
-			case card.name === 'target_attack':
+			case 'targeted_attack':
 				handleCardTargetAttack();
 				break;
 			default:
-				toast.error('Card not found', $toastSettings);
+				console.error('Card ' + card.name + ' not found');
 				break;
 		}
 		console.log('Removing ' + card_name + ' from ' + $gameStates.currentPlayer + ' hand cards');
 		removeFromHandCards(card_name, $gameStates.currentPlayer);
-		let card = $cards.find((c) => c.name === card_name);
 	}
 
 	/**
@@ -81,6 +81,14 @@
 		await buttonPressPromise;
 	}
 
+	/**
+	 * Handles card target attack
+	 * @returns {void}
+	 * @function handleCardTargetAttack
+	 * @description Handles card target attack, lets the current player choose a player to attack
+	 * @example
+	 * handleCardTargetAttack();
+	 */
 	async function handleCardTargetAttack() {
 		console.log('Handling card target attack');
 		$popupValues.popupOpen = true;
@@ -90,11 +98,17 @@
 
 		const buttonPressPromise = new Promise((resolve) => {
 			if ($gameStates.popupButtonPressed) {
+				console.log('Popup button pressed');
 				resolve();
 			}
 		});
 
 		await buttonPressPromise;
+		handleAttack($gameStates.lastPopupSelect);
+	}
+
+	function handleAttack(playerTarget) {
+		console.log('Handling attack on player: ' + playerTarget);
 	}
 
 	/**

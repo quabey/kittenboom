@@ -7,6 +7,7 @@
 	import toast from 'svelte-french-toast';
 	import { Spinner } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
+	import * as Colyseus from 'colyseus.js';
 
 	// >> On mount <<
 	// Ensure that the game is loaded before starting
@@ -44,6 +45,18 @@
 			$gameStates.gameSetuping = false;
 			$gameStates.gameState = 'running';
 		}, 3000);
+	}
+
+	function addPlayer(playerServer_id, name) {
+		$players.push({
+			player_id: $players.length,
+			playerServer_id: playerServer_id,
+			name: name,
+			alive: true,
+			handCards: []
+		});
+		console.log('Player added');
+		console.table($players);
 	}
 
 	/**

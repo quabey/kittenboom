@@ -21,7 +21,6 @@
 
 	async function getGameRooms() {
 		const rooms = await getRooms();
-		console.log(rooms);
 		$roomsStore = rooms;
 		toast.promise(
 			promise,

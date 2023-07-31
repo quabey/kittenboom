@@ -1,6 +1,7 @@
 import * as Colyseus from 'colyseus.js';
 import { roomStore, chatMessages } from './../stores-game';
 import { get } from 'svelte/store';
+import { send } from 'vite';
 
 let client = new Colyseus.Client('ws://localhost:2567');
 
@@ -33,6 +34,12 @@ export async function createOrJoin() {
 	}
 }
 
+/**
+ * Get all available rooms
+ * @returns {void}
+ * @function getRooms
+ * @description Get all available rooms from the server
+ */
 export async function getRooms() {
 	let rooms;
 	let error;
@@ -54,6 +61,13 @@ export async function getRooms() {
 	}
 }
 
+/**
+ * Join a room by id
+ * @param {String} roomId
+ * @returns {void}
+ * @function joinRoom
+ * @description Join a room by id and set the roomStore
+ */
 export async function joinRoom(roomId) {
 	try {
 		const room = await client.joinById(roomId, {});
@@ -65,6 +79,12 @@ export async function joinRoom(roomId) {
 	}
 }
 
+/**
+ * Leave the room
+ * @returns {void}
+ * @function leaveRoom
+ * @description Leave the room
+ */
 export async function leaveRoom() {
 	try {
 		room = await client.leave(roomId, {});
@@ -76,11 +96,28 @@ export async function leaveRoom() {
 	}
 }
 
+/**
+ * Send a message to the server
+ * @param {string} type
+ * @param {string} message
+ * @returns {void}
+ * @function sendMessage
+ * @description Send a message to the server, takes type as parameter
+ */
 export function sendMessage(type, message) {
-	console.log('======= Sending message ========');
 	room.send(type, message);
 }
 
+// export function sendChat(message) {
+// 	sendMessage('chat', message);
+// }
+
+/**
+ * Listen to messages from the server
+ * @returns {void}
+ * @function listenToMessages
+ * @description Listen to messages from the server, chat and message
+ */
 function listenToMessages() {
 	room.onMessage('message', (message) => {
 		console.log('received message', message);

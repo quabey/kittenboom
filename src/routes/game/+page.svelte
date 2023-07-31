@@ -75,22 +75,24 @@
 		<Popup title={$popupValues.title} text={$popupValues.text} type={$popupValues.type} />
 	</div>
 {/if}
-
-{#each $players as player}
-	Player: {player.name}
-	<div class="playerCards">
-		{#if player.handCards.length == 0}
-			<p>Player has no cards</p>
-		{/if}
-		{#each $players[player.player_id].handCards as card}
-			<CardButton card_name={card} />
+<div class="flex">
+	<div class="w-[77vw]">
+		{#each $players as player}
+			Player: {player.name}
+			<div class="playerCards">
+				{#if player.handCards.length == 0}
+					<p>Player has no cards</p>
+				{/if}
+				{#each $players[player.player_id].handCards as card}
+					<CardButton card_name={card} />
+				{/each}
+			</div>
 		{/each}
 	</div>
-{/each}
-
-<hr />
-
-<Chat />
+	<div class="w-[27vw] h-[70vh]">
+		<Chat />
+	</div>
+</div>
 
 <style>
 	.playerCards {

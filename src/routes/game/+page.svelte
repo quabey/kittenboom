@@ -2,7 +2,13 @@
 	// =========== STORES =========== //
 	import { cardStack, playedCards } from './../../stores-game.js';
 	import { players } from './../../stores-players.js';
-	import { gameStates, playerStates, popupValues, debugStates } from './../../stores-game.js';
+	import {
+		gameStates,
+		playerStates,
+		popupValues,
+		debugStates,
+		roomStore
+	} from './../../stores-game.js';
 
 	// =========== COMPONENTS =========== //
 	import Cards from '$lib/cards.svelte';
@@ -11,9 +17,12 @@
 	import Popup from '$lib/popup.svelte';
 	import NewGame from '$lib/newGame.svelte';
 	import GameBar from '$lib/gameBar.svelte';
+	import Chat from '$lib/chat.svelte';
 
 	// =========== OTHER =========== //
 	import toast from 'svelte-french-toast';
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 
 	let cardsComponent;
 
@@ -33,6 +42,13 @@
 
 	console.table($gameStates);
 	console.log('Current player: ' + getCurrentPlayer().name);
+
+	onMount(() => {
+		if (!$roomStore) {
+			goto('/');
+			console.error('No room found');
+		} else console.log('Room found', $roomStore);
+	});
 </script>
 
 <!--  -->
@@ -73,6 +89,8 @@
 {/each}
 
 <hr />
+
+<Chat />
 
 <style>
 	.playerCards {

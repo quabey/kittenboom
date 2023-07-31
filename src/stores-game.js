@@ -51,6 +51,20 @@ export const gameStates = writable({
 	popupButtonPressed: false
 });
 
+export const roomStore = writable();
+export const roomsStore = writable([]);
+
+export const roomStates = writable({
+	room_id: 'undefined',
+	rooms: [
+		{
+			room_id: 'undefined',
+			room_name: 'undefined',
+			room_players: 0
+		}
+	]
+});
+
 export const playerStates = writable({
 	player_id: 1,
 	isTurn: true
@@ -135,4 +149,15 @@ export const extraCards = writable([
 	'defuse',
 	'defuse',
 	'defuse'
+]);
+
+export const chatMessages = writable([
+	{
+		name: 'Test',
+		message: 'Test'
+	},
+	{
+		name: 'server',
+		message: 'Welcome to the server!'
+	}
 ]);

@@ -17,10 +17,12 @@
 	// =========== OTHER =========== //
 	import toast from 'svelte-french-toast';
 	import { Tabs, TabItem } from 'flowbite-svelte';
+	import { getRooms, createOrJoin, joinRoom, sendMessage } from '$lib/gameserver.js';
 
 	// =========== VARIABLES =========== //
 	let password;
 	let cardToAdd = '';
+	let cardToGive = [];
 
 	// =========== FUNCTIONS =========== //
 
@@ -104,10 +106,31 @@
 		}
 		toast.error('Wrong password', $toastSettings);
 	}
+
+	function handleKillPlayer(player_id, player_name) {
+		$players[player_id].alive = false;
+		let killed = 'Killed ' + player_name;
+		console.log(killed + ' ' + player_name);
+		toast(killed, {
+			position: 'top-right',
+			duration: 10000,
+			dismissible: false,
+			pauseOnHover: true,
+			icon: '💀'
+		});
+	}
+
+	function handleKickPlayer(player_id, player_name) {
+		console.log('todo');
+	}
+
+	function sendTestMessage() {
+		console.log('Sending test message');
+		sendMessage('message', 'test');
+	}
 </script>
 
 <div class="debug-container">
-	<div class="debug-info-bar" />
 	{#if $debugStates.debugMode}
 		<Tabs style="underline">
 			<TabItem>
@@ -118,10 +141,11 @@
 						fill="currentColor"
 						viewBox="0 0 20 20"
 						xmlns="http://www.w3.org/2000/svg"
-						><path
-							d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-						/></svg
 					>
+						<path
+							d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+						/>
+					</svg>
 					Overview
 				</div>
 				<div class="debug-options">
@@ -163,14 +187,16 @@
 						<div>
 							Add Card to Stack:
 							<br />
-							<Dropdown class="dropdown" bind:current_name={cardToAdd} options={$cards} />
+							<Dropdown bind:current_name={cardToAdd} options={$cards} />
 
 							<button
 								on:click={() =>
 									($cardStack = $cardStack.concat([
 										{ stack_id: $cardStack.lenght, name: cardToAdd }
-									]))}>Add</button
+									]))}
 							>
+								Add
+							</button>
 						</div>
 						<ul class="cardList">
 							{#each $cardStack as card, i}
@@ -201,32 +227,37 @@
 					</svg>
 					Players
 				</div>
-				<div class="Player-Options h-min">
-					<p>
-						Current Player: {$players[$gameStates.currentPlayer].name} (ID:{$gameStates.currentPlayer})
-					</p>
-
-					<p class="overflow-scroll player-list">
-						Players({$players.length}):
-
-						{#each $players as player}
-							<div>
-								<div class:active={$gameStates.currentPlayer == player.player_id}>
-									{player.name} (ID: {player.player_id})
-									<button on:click={() => ($gameStates.currentPlayer = player.player_id)}
-										>Set active</button
-									>
+				<div class="Player-Options h-[63vh] border-red-600 border-solid border-2 overflow-y-scroll">
+					{#each $players as player}
+						<div class="border-2 border-green-600 bg-gray-300 my-1 rounded-lg p-2">
+							<div class="flex flex-row">
+								<div class="w-1/2 border-r-2 border-black">
+									<div class="text-lg font-bold">
+										{player.name}
+									</div>
+									<h2 class="text-md">Infos:</h2>
+									<div class="text-sm">
+										Player ID: {player.player_id} <br />
+										Player Server ID: {player.playerServer_id} <br />
+										Alive: {player.alive}
+									</div>
+									<h2 class="text-md">Actions:</h2>
+									<div class="text-sm">
+										<button on:click={handleKillPlayer(player.player_id, player.name)}>
+											Kill
+										</button>
+										<button on:click={handleKickPlayer(player.player_id, player.name)}>
+											Kick
+										</button> <br />
+										<Dropdown bind:current_name={cardToGive[player.player_id]} options={$cards} />
+									</div>
 								</div>
-								<div class="player-handcards">
-									{#each $players[player.player_id].handCards as card}
-										<div class="player-handcard">
-											{card}
-										</div>
-									{/each}
+								<div class="w-1/2">
+									<h2 class="text-md">Cards:</h2>
 								</div>
 							</div>
-						{/each}
-					</p>
+						</div>
+					{/each}
 				</div>
 			</TabItem>
 			<TabItem>
@@ -284,6 +315,7 @@
 				</div>
 				<div class="debug-other">
 					<button on:click={handleDisableDebug}>Disable Debug Mode</button>
+					<button on:click={sendTestMessage}> Send test message </button>
 				</div>
 			</TabItem>
 		</Tabs>

@@ -9,8 +9,6 @@
 	import { onMount } from 'svelte';
 	import * as Colyseus from 'colyseus.js';
 
-	var client = new Colyseus.Client('ws://localhost:2567');
-
 	// >> On mount <<
 	// Ensure that the game is loaded before starting
 	onMount(() => {
@@ -43,18 +41,22 @@
 		toast.success('Starting game with ' + $players.length + ' players', $toastSettings);
 		console.table($players);
 		console.table($deck);
-		client
-			.joinOrCreate('my_room')
-			.then((room) => {
-				console.log(room.sessionId, 'joined', room.name);
-			})
-			.catch((e) => {
-				console.log('JOIN ERROR', e);
-			});
 		setTimeout(() => {
 			$gameStates.gameSetuping = false;
 			$gameStates.gameState = 'running';
 		}, 3000);
+	}
+
+	function addPlayer(playerServer_id, name) {
+		$players.push({
+			player_id: $players.length,
+			playerServer_id: playerServer_id,
+			name: name,
+			alive: true,
+			handCards: []
+		});
+		console.log('Player added');
+		console.table($players);
 	}
 
 	/**
